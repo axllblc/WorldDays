@@ -1,27 +1,19 @@
 package com.axllblc.worlddays;
 
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.axllblc.worlddays.databinding.ActivityMainBinding;
-
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
 
-    private AppBarConfiguration appBarConfiguration;
+import com.axllblc.worlddays.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.Snackbar;
+
+public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
+    /** Callback to handle back button pressed when Search View is open. */
+    private OnBackPressedCallback searchViewOnBackPressedCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +22,32 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.toolbar);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // Search Bar & Search View
+        setSupportActionBar(binding.searchBar);
+        binding.searchView.setupWithSearchBar(binding.searchBar);
 
-        binding.fabToday.setOnClickListener(new View.OnClickListener() {
+        searchViewOnBackPressedCallback = new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab_today)
-                        .setAction("Action", null).show();
+            public void handleOnBackPressed() {
+                if (binding.searchView.isShowing()) {
+                    binding.searchView.hide();
+                } else {
+                    // If the Search View is closed, remove this callback and call onBackPressed again
+                    searchViewOnBackPressedCallback.remove();
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
             }
-        });
+        };
+
+        binding.searchBar.setNavigationOnClickListener(v -> openSearchView());
+        binding.searchBar.setOnClickListener(v -> openSearchView());
+
+
+        binding.fabToday.setOnClickListener(view ->
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAnchorView(R.id.fab_today)
+                    .setAction("Action", null).show());
     }
 
     @Override
@@ -68,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+    private void openSearchView() {
+        binding.searchView.show();
+
+        // Close Search View when the back button is pressed
+        getOnBackPressedDispatcher().addCallback(searchViewOnBackPressedCallback);
     }
 }
