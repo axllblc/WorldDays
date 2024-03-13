@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.axllblc.worlddays"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -35,7 +35,8 @@ android {
 }
 
 dependencies {
-
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
