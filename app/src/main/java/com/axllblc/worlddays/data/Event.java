@@ -5,6 +5,7 @@ import java.time.MonthDay;
 import java.time.Year;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
@@ -17,6 +18,7 @@ import lombok.With;
 @Getter
 @With
 @ToString
+@EqualsAndHashCode
 public class Event {
     // 👇 Basic information about the event
     /**
