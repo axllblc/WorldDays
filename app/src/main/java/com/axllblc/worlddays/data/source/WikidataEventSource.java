@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -109,10 +111,7 @@ public class WikidataEventSource implements ReadableEventSource {
 
     private final OkHttpClient client;
 
-    public static WikidataEventSource getInstance(WorldDaysApplication applicationContext) {
-        return new WikidataEventSource(applicationContext.getContainer().getOkHttpClient());
-    }
-
+    @Inject
     public WikidataEventSource(OkHttpClient client) {
         this.client = client;
     }

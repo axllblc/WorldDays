@@ -16,12 +16,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class LocalDatabaseEventSource extends SQLiteOpenHelper
-        implements ReadableEventSource, WritableEventSource {
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWriteEventSource {
     private static final String DB_NAME = "world_days.db";
     private static final int VERSION = 1;
 
-    public LocalDatabaseEventSource(Context context) {
+    public @Inject LocalDatabaseEventSource(@ApplicationContext Context context) {
         super(context, DB_NAME, null, VERSION);
     }
 

@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,10 +28,7 @@ public class WikipediaIntroSource {
 
     private final OkHttpClient client;
 
-    public static WikipediaIntroSource getInstance(WorldDaysApplication applicationContext) {
-        return new WikipediaIntroSource(applicationContext.getContainer().getOkHttpClient());
-    }
-
+    @Inject
     public WikipediaIntroSource(OkHttpClient client) {
         this.client = client;
     }

@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.hiltPlugin)
 }
 
 android {
@@ -46,4 +47,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Hilt
+    implementation(libs.hiltAndroid)
+    annotationProcessor(libs.hiltCompiler)
+    // For instrumentation tests
+    androidTestImplementation(libs.hiltAndroidTesting)
+    androidTestAnnotationProcessor(libs.hiltCompiler)
+    // For local unit tests
+    testImplementation(libs.hiltAndroidTesting)
+    testAnnotationProcessor(libs.hiltCompiler)
 }
