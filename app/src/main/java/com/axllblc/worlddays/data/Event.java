@@ -132,4 +132,8 @@ public class Event {
     public LocalDate getOccurrenceForYear(int year) {
         return monthDay.atYear(year);
     }
+
+    public boolean hasSameId(Event other) {
+        return id.equals(other.id);
+    }
 }
