@@ -44,6 +44,12 @@ public interface Result<T> {
     void throwException() throws Throwable;
 
     /**
+     * If an exception is present, returns it.
+     * @return The exception, or {@code null}
+     */
+    Throwable getException();
+
+    /**
      * If a value is present, returns it, otherwise throws the exception contained in this
      * {@code Result}.
      * @return The value of this {@code Result}
@@ -128,6 +134,11 @@ public interface Result<T> {
         }
 
         @Override
+        public Throwable getException() {
+            return null;
+        }
+
+        @Override
         public T orThrow() {
             // No exception to throw
             return value;
@@ -185,6 +196,11 @@ public interface Result<T> {
         @Override
         public void throwException() throws Throwable {
             throw exception;
+        }
+
+        @Override
+        public Throwable getException() {
+            return exception;
         }
 
         @Override
