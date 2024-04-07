@@ -5,6 +5,7 @@ import com.axllblc.worlddays.data.source.ReadWriteEventSource;
 import com.axllblc.worlddays.data.source.ReadableEventSource;
 import com.axllblc.worlddays.data.source.WikidataEventSource;
 import com.axllblc.worlddays.data.source.WikipediaIntroSource;
+import com.axllblc.worlddays.data.source.WikipediaIntroSourceImpl;
 
 import javax.inject.Singleton;
 
@@ -18,7 +19,7 @@ import dagger.hilt.components.SingletonComponent;
 public abstract class DataSourceModule {
     @Singleton
     @Binds
-    public abstract WikipediaIntroSource bindWikipediaIntroSource(WikipediaIntroSource impl);
+    public abstract WikipediaIntroSource bindWikipediaIntroSource(WikipediaIntroSourceImpl impl);
 
     @Singleton
     @Binds
