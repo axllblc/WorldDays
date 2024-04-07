@@ -3,26 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/HomeFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.axllblc.worlddays.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+        android:id="@+id/HomeFragment"
+        android:name="com.axllblc.worlddays.ui.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="Date"
+            app:argType="java.time.LocalDate" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.axllblc.worlddays.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+        android:id="@+id/CalendarFragment"
+        android:name="com.axllblc.worlddays.ui.CalendarFragment"
+        android:label="fragment_calendar"
+        tools:layout="@layout/fragment_calendar" >
+        <argument
+            android:name="date"
+            app:argType="java.time.LocalDate" />
     </fragment>
+
+    <fragment
+        android:id="@+id/FavoritesFragment"
+        android:name="com.axllblc.worlddays.ui.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites" />
+
+    <action
+        android:id="@+id/back_to_today"
+        app:destination="@id/HomeFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/nav_graph" />
 </navigation>

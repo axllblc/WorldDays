@@ -6,14 +6,24 @@ import android.view.MenuItem;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import com.axllblc.worlddays.databinding.ActivityMainBinding;
-import com.google.android.material.snackbar.Snackbar;
+import com.axllblc.worlddays.ui.HomeFragment;
 
+import java.time.LocalDate;
+import java.util.Objects;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     /** Callback to handle back button pressed when Search View is open. */
     private OnBackPressedCallback searchViewOnBackPressedCallback;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +54,20 @@ public class MainActivity extends AppCompatActivity {
         binding.searchBar.setOnClickListener(v -> openSearchView());
 
 
-        binding.fabToday.setOnClickListener(view ->
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAnchorView(R.id.fab_today)
-                    .setAction("Action", null).show());
+        NavHostFragment navHostFragment = (NavHostFragment)
+                getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+        navController = Objects.requireNonNull(navHostFragment).getNavController();
+
+        NavigationUI.setupWithNavController(binding.bottomNavigation, navController);
+
+
+        binding.fabToday.setOnClickListener(view -> navController.navigate(R.id.back_to_today));
+    }
+
+    public void navigateToHome(LocalDate date) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(HomeFragment.ARG_DATE, date);
+        navController.navigate(R.id.back_to_today, bundle);
     }
 
     @Override

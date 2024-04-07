@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/bn_home"
+        android:id="@id/HomeFragment"
         android:enabled="true"
         android:icon="@drawable/ic_home"
         android:title="@string/home" />
     <item
-        android:id="@+id/bn_calendar"
+        android:id="@id/CalendarFragment"
         android:enabled="true"
         android:icon="@drawable/ic_calendar_month"
         android:title="@string/calendar" />
     <item
-        android:id="@+id/bn_favorites"
+        android:id="@id/FavoritesFragment"
         android:enabled="true"
         android:icon="@drawable/ic_star"
         android:title="@string/favorites" />
