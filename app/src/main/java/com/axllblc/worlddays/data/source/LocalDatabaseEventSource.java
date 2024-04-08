@@ -67,7 +67,9 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
                     null)
             ) {
                 if (cursor.moveToNext()) {
-                    return Optional.of(cursorToEvent(cursor, withDetails));
+                    Event event = cursorToEvent(cursor, withDetails);
+                    if (withDetails && !event.isDetailed()) return Optional.empty();
+                    return Optional.of(event);
                 } else {
                     return Optional.empty();
                 }
@@ -163,8 +165,10 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
         int dayOfMonth = cursor
                 .getInt(cursor.getColumnIndexOrThrow(DBContract.Events.DAY_OF_MONTH.toString()));
         MonthDay monthDay = MonthDay.of(month, dayOfMonth);
+        boolean detailsFetched = 1 == cursor
+                .getInt(cursor.getColumnIndexOrThrow(DBContract.Events.DETAILS_FETCHED.toString()));
 
-        if (withDetails) {
+        if (withDetails && detailsFetched) {
             String wikipediaUrl = cursor
                     .getString(cursor.getColumnIndexOrThrow(DBContract.Events.WIKIPEDIA_URL.toString()));
             String wikipediaIntro = cursor
@@ -212,7 +216,7 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
                 }
 
                 long result = db.insert(DBContract.Events.TABLE_NAME, null, row);
-                if (result == -1) throw new RuntimeException();
+                // TODO if (result == -1) throw new RuntimeException();
             }
         }
     }
