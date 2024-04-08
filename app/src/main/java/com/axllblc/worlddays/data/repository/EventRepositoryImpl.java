@@ -78,7 +78,7 @@ public class EventRepositoryImpl implements EventRepository {
         try {
             List<Event> eventsFromLocalSource = localEventSource.getAll();
 
-            if (refresh || !eventsFromLocalSource.isEmpty()) {
+            if (refresh || eventsFromLocalSource.isEmpty()) {
                 // Fetch from remote source
                 List<Event> eventsFromRemoteSource;
                 try {
@@ -103,7 +103,7 @@ public class EventRepositoryImpl implements EventRepository {
         try {
             List<Event> eventsFromLocalSource = localEventSource.getEventsByName(str);
 
-            if (refresh || !eventsFromLocalSource.isEmpty()) {
+            if (refresh || eventsFromLocalSource.isEmpty()) {
                 // Fetch from remote source
                 List<Event> eventsFromRemoteSource;
                 try {
@@ -128,7 +128,7 @@ public class EventRepositoryImpl implements EventRepository {
         try {
             List<Event> eventsFromLocalSource = localEventSource.getEventsByMonth(month);
 
-            if (refresh || !eventsFromLocalSource.isEmpty()) {
+            if (refresh || eventsFromLocalSource.isEmpty()) {
                 // Fetch from remote source
                 List<Event> eventsFromRemoteSource;
                 try {
