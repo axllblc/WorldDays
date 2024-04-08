@@ -148,6 +148,31 @@ public class EventRepositoryImpl implements EventRepository {
         }
     }
 
+    @Override
+    public List<Event> getFavorites() {
+        return localEventSource.getFavorites();
+    }
+
+    @Override
+    public boolean isFavorite(Event event) {
+        return localEventSource.isFavorite(event);
+    }
+
+    @Override
+    public void star(Event event) {
+        localEventSource.star(event);
+    }
+
+    @Override
+    public void unstar(Event event) {
+        localEventSource.unstar(event);
+    }
+
+    @Override
+    public void unstarAll() {
+        localEventSource.unstarAll();
+    }
+
     private void merge(Event eventFromRemoteSource, Event eventFromLocalSource) {
         if (eventFromRemoteSource != null) {
             if (eventFromLocalSource == null) {

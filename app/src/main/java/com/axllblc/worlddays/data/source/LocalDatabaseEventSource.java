@@ -246,6 +246,90 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
         }
     }
 
+
+    // FavoriteEventSource implementation
+
+    @Override
+    public List<Event> getFavorites() {
+        try (SQLiteDatabase db = getReadableDatabase()) {
+            String[] projection = {"*"};
+
+            try (Cursor cursor = db.query(
+                    DBContract.Events.TABLE_NAME,
+                    projection,
+                    DBContract.Events.USER_FAVORITE + " = 1",
+                    null,
+                    null,
+                    null,
+                    null)
+            ) {
+                List<Event> events = new ArrayList<>();
+
+                while (cursor.moveToNext()) {
+                    events.add(cursorToEvent(cursor, false));
+                }
+
+                return events;
+            }
+        }
+    }
+
+    @Override
+    public boolean isFavorite(Event event) {
+        try (SQLiteDatabase db = getReadableDatabase()) {
+            String[] projection = {"*"};
+
+            String selection = DBContract.Events.ID + " = ? AND "
+                    + DBContract.Events.USER_FAVORITE + " = 1";
+            String[] selectionArgs = {event.getId()};
+
+            try (Cursor cursor = db.query(
+                    DBContract.Events.TABLE_NAME,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null)
+            ) {
+                return cursor.moveToNext();
+                // Returns true if there is an event
+            }
+        }
+    }
+
+    @Override
+    public void star(Event event) {
+        setFavorite(event, true);
+    }
+
+    @Override
+    public void unstar(Event event) {
+        setFavorite(event, false);
+    }
+
+    @Override
+    public void unstarAll() {
+        try (SQLiteDatabase db = getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DBContract.Events.USER_FAVORITE.toString(), false);
+
+            db.update(DBContract.Events.TABLE_NAME, contentValues, null, null);
+        }
+    }
+
+    private void setFavorite(Event event, boolean star) {
+        try (SQLiteDatabase db = getWritableDatabase()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DBContract.Events.USER_FAVORITE.toString(), star);
+
+            String whereClause = DBContract.Events.ID + " = ?";
+            String[] whereArgs = {event.getId()};
+
+            db.update(DBContract.Events.TABLE_NAME, contentValues, whereClause, whereArgs);
+        }
+    }
+
     /**
      * Defines the tables of the database.
      */
