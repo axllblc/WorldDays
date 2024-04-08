@@ -16,6 +16,10 @@
         android:theme="@style/Theme.WorldDays"
         tools:targetApi="31">
         <activity
+            android:name=".DetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.WorldDays" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.WorldDays">

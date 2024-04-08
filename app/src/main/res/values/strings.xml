@@ -14,4 +14,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="open_wikipedia_article">Read more on Wikipedia</string>
+    <string name="date_in">In %d days</string>
+    <string name="since">Since %s</string>
+    <string name="add_to_calendar">Add to my calendar</string>
 </resources>
