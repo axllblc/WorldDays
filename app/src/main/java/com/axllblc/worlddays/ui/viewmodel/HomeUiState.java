@@ -18,8 +18,9 @@ import lombok.With;
 @With
 @ToString
 @EqualsAndHashCode
-public class CalendarUiState {
+public class HomeUiState {
     private final LocalDate date;
     private final List<Event> events;
     private Throwable exception = null;
+    private boolean loading = true;
 }

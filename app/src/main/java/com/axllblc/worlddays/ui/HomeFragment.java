@@ -10,13 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.axllblc.worlddays.databinding.FragmentHomeBinding;
-import com.axllblc.worlddays.ui.viewmodel.CalendarViewModel;
+import com.axllblc.worlddays.ui.viewmodel.HomeUiState;
+import com.axllblc.worlddays.ui.viewmodel.HomeViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.time.LocalDate;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -26,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeFragment extends Fragment {
-    private CalendarViewModel calendarViewModel;
+    private HomeViewModel viewModel;
 
     private FragmentHomeBinding binding;
 
@@ -62,18 +65,20 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        calendarViewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        LocalDate dateParam;
+        Optional<LocalDate> dateParam;
         if (getArguments() != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                dateParam = getArguments().getSerializable(ARG_DATE, LocalDate.class);
+                dateParam = Optional.ofNullable(
+                        getArguments().getSerializable(ARG_DATE, LocalDate.class)
+                );
             } else {
-                dateParam = (LocalDate) getArguments().getSerializable(ARG_DATE);
+                dateParam = Optional.ofNullable(
+                        (LocalDate) getArguments().getSerializable(ARG_DATE)
+                );
             }
-            if (dateParam != null) {
-                calendarViewModel.setDate(dateParam);
-            }
+            viewModel.setDate(dateParam.orElse(LocalDate.now()));
         }
     }
 
@@ -86,23 +91,25 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        calendarViewModel.getUiState().observe(getViewLifecycleOwner(), uiState -> {
-            binding.fragmentHomeTextview.setText(
-                    uiState.getEvents().stream().limit(1).collect(Collectors.toList()).toString()
-            );
+        // Set LayoutManager for RecyclerView
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        binding.eventsList.setLayoutManager(layoutManager);
 
-            // Display error messages
-            if (uiState.getException() != null) {
-                Snackbar.make(requireView(), "Something went wrong", Snackbar.LENGTH_SHORT)
-                        .show();
-                calendarViewModel.clearException();
-            }
-        });
+        // Refresh fragment content when UI state changes
+        viewModel.getUiState().observe(getViewLifecycleOwner(), this::refreshFragment);
+    }
 
-        binding.test.setOnClickListener(v ->
-                calendarViewModel.fetchEventsForMonth(calendarViewModel.getUiState().getValue()
-                        .getDate().getMonth()
-                )
-        );
+    private void refreshFragment(HomeUiState uiState) {
+        // Display error messages
+        if (uiState.getException() != null) {
+            Snackbar.make(requireView(), "Something went wrong", Snackbar.LENGTH_SHORT)
+                    .show();
+            viewModel.clearException();
+        }
+
+        // Display event list
+        EventListAdapter adapter =
+                new EventListAdapter(uiState.getEvents(), uiState.getDate().getYear());
+        binding.eventsList.setAdapter(adapter);
     }
 }

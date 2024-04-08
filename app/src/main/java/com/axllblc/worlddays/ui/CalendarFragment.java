@@ -27,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class CalendarFragment extends Fragment {
-    private CalendarViewModel calendarViewModel;
+    private CalendarViewModel viewModel;
 
     private FragmentCalendarBinding binding;
 
@@ -62,7 +62,7 @@ public class CalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        calendarViewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
+        viewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
 
         LocalDate dateParam;
         if (getArguments() != null) {
@@ -72,7 +72,7 @@ public class CalendarFragment extends Fragment {
                 dateParam = (LocalDate) getArguments().getSerializable(ARG_DATE);
             }
             if (dateParam != null) {
-                calendarViewModel.setDate(dateParam);
+                viewModel.setDate(dateParam);
             }
         }
     }
@@ -86,16 +86,15 @@ public class CalendarFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        calendarViewModel.getUiState().observe(getViewLifecycleOwner(), uiState ->
+        viewModel.getDate().observe(getViewLifecycleOwner(), date ->
                 binding.calendarView.setDate(
-                        uiState.getDate()
-                                .atStartOfDay(ZoneId.systemDefault())
+                        date.atStartOfDay(ZoneId.systemDefault())
                                 .toEpochSecond() * 1000
         ));
 
         binding.calendarView.setOnDateChangeListener((view1, year, month, dayOfMonth) -> {
                     LocalDate date = LocalDate.of(year, month + 1, dayOfMonth);
-                    calendarViewModel.setDate(date);
+                    viewModel.setDate(date);
                     ((MainActivity) requireActivity()).navigateToHome(date);
         });
     }
