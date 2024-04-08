@@ -88,8 +88,9 @@ public class WikidataEventSource implements ReadableEventSource {
      */
     private static final String SPARQL_WIKIPEDIA_URL =
             "OPTIONAL { " +
-                    "?article schema:about ?worldDay. " +
-                    "?article schema:inLanguage \"%s\". " +
+                    "?article schema:about ?worldDay; " +
+                    "schema:inLanguage \"%s\"; " +
+                    "schema:isPartOf <https://%s.wikipedia.org/>. " +
             "}";
 
     /**
@@ -139,7 +140,7 @@ public class WikidataEventSource implements ReadableEventSource {
         if (withDetails) {
             qb.addSelect(SPARQL_SELECT_DETAILED)
                     .addWhere(SPARQL_WHERE_DETAILED, language)
-                    .addWhere(SPARQL_WIKIPEDIA_URL, language)
+                    .addWhere(SPARQL_WIKIPEDIA_URL, language, language)
                     .addOrderBy("?inception");
         }
 
