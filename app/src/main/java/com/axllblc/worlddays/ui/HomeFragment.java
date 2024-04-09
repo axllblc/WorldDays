@@ -19,6 +19,8 @@ import com.axllblc.worlddays.ui.viewmodel.HomeViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.Optional;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -111,5 +113,15 @@ public class HomeFragment extends Fragment {
         EventListAdapter adapter =
                 new EventListAdapter(uiState.getEvents(), uiState.getDate().getYear());
         binding.eventsList.setAdapter(adapter);
+
+        // Show/hide circular indicator
+        binding.progressIndicator.setVisibility(uiState.isLoading() ? View.VISIBLE : View.GONE);
+
+        // Show month and year
+        LocalDate date = uiState.getDate();
+        binding.monthYear.setText(
+                date.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
+                        + " " + date.getYear()
+        );
     }
 }
