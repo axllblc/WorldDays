@@ -275,13 +275,13 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
     }
 
     @Override
-    public boolean isFavorite(Event event) {
+    public boolean isFavorite(String eventId) {
         try (SQLiteDatabase db = getReadableDatabase()) {
             String[] projection = {"*"};
 
             String selection = DBContract.Events.ID + " = ? AND "
                     + DBContract.Events.USER_FAVORITE + " = 1";
-            String[] selectionArgs = {event.getId()};
+            String[] selectionArgs = {eventId};
 
             try (Cursor cursor = db.query(
                     DBContract.Events.TABLE_NAME,
@@ -299,13 +299,13 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
     }
 
     @Override
-    public void star(Event event) {
-        setFavorite(event, true);
+    public void star(String eventId) {
+        setFavorite(eventId, true);
     }
 
     @Override
-    public void unstar(Event event) {
-        setFavorite(event, false);
+    public void unstar(String eventId) {
+        setFavorite(eventId, false);
     }
 
     @Override
@@ -318,13 +318,13 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
         }
     }
 
-    private void setFavorite(Event event, boolean star) {
+    private void setFavorite(String eventId, boolean star) {
         try (SQLiteDatabase db = getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
             contentValues.put(DBContract.Events.USER_FAVORITE.toString(), star);
 
             String whereClause = DBContract.Events.ID + " = ?";
-            String[] whereArgs = {event.getId()};
+            String[] whereArgs = {eventId};
 
             db.update(DBContract.Events.TABLE_NAME, contentValues, whereClause, whereArgs);
         }

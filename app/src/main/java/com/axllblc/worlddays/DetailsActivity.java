@@ -3,6 +3,8 @@ package com.axllblc.worlddays;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +30,42 @@ public class DetailsActivity extends AppCompatActivity {
     private ActivityDetailsBinding binding;
     public static final String ARG_EVENT_ID = "eventId";
     private String eventId;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.details, menu);
+
+        if (viewModel.getUiState().getValue().getEvent() != null) {
+            // Share menu item
+            MenuItem share = menu.findItem(R.id.share);
+            share.setVisible(true);
+
+            // Add to favorites / Remove from favorite menu items
+            Boolean isFavorite = viewModel.getUiState().getValue().getIsFavorite();
+            if (isFavorite != null) {
+                MenuItem addToFavorites = menu.findItem(R.id.add_to_favorites);
+                MenuItem removeFromFavorites = menu.findItem(R.id.remove_from_favorites);
+                if (viewModel.getUiState().getValue().getIsFavorite()) {
+                    addToFavorites.setVisible(false);
+                    removeFromFavorites.setVisible(true);
+                    removeFromFavorites.setOnMenuItemClickListener(item -> {
+                        viewModel.setFavorite(false);
+                        return true;
+                    });
+                } else {
+                    addToFavorites.setVisible(true);
+                    addToFavorites.setOnMenuItemClickListener(item -> {
+                        viewModel.setFavorite(true);
+                        return true;
+                    });
+                    removeFromFavorites.setVisible(false);
+                }
+            }
+        }
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +121,19 @@ public class DetailsActivity extends AppCompatActivity {
             if (event.getWikipediaURL() != null) {
                 binding.eventDetailsOpenWikipedia.setVisibility(View.VISIBLE);
             }
+
+            invalidateMenu();
         }
         if (uiState.getException() != null) {
             Snackbar.make(binding.getRoot(), "Something went wrong", Snackbar.LENGTH_SHORT)
                     .show();
             Log.e("err", "err", uiState.getException());
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 }

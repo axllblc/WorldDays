@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface FavoriteEventSource {
     List<Event> getFavorites();
-    boolean isFavorite(Event event);
-    void star(Event event);
-    void unstar(Event event);
+    boolean isFavorite(String eventId);
+    void star(String eventId);
+    void unstar(String eventId);
     void unstarAll();
 }

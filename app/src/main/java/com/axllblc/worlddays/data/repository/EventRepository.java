@@ -13,8 +13,8 @@ public interface EventRepository {
     Result<List<Event>> getEventsByMonth(int month, boolean refresh) throws Exception;
 
     List<Event> getFavorites();
-    boolean isFavorite(Event event);
-    void star(Event event);
-    void unstar(Event event);
+    boolean isFavorite(String eventId);
+    void star(String eventId);
+    void unstar(String eventId);
     void unstarAll();
 }

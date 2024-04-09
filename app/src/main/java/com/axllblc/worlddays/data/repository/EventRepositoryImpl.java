@@ -154,18 +154,18 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public boolean isFavorite(Event event) {
-        return localEventSource.isFavorite(event);
+    public boolean isFavorite(String eventId) {
+        return localEventSource.isFavorite(eventId);
     }
 
     @Override
-    public void star(Event event) {
-        localEventSource.star(event);
+    public void star(String eventId) {
+        localEventSource.star(eventId);
     }
 
     @Override
-    public void unstar(Event event) {
-        localEventSource.unstar(event);
+    public void unstar(String eventId) {
+        localEventSource.unstar(eventId);
     }
 
     @Override

@@ -18,4 +18,5 @@ import lombok.With;
 public class DetailsUiState {
     private Event event = null;
     private Throwable exception = null;
+    private Boolean isFavorite = null;
 }

@@ -2,6 +2,8 @@ package com.axllblc.worlddays.ui.viewmodel;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.util.Pair;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -22,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class DetailsViewModel extends ViewModel {
+    private static final String TAG = "DetailsViewModel";
     private final EventRepository eventRepository;
 
     private final MutableLiveData<DetailsUiState> uiState;
@@ -51,15 +54,16 @@ public class DetailsViewModel extends ViewModel {
         Handler handler = new Handler(Looper.getMainLooper());           // Main thread
 
         // Callback, to be executed in the main thread
-        Consumer<Result<Optional<Event>>> callback = result -> {
-            if (result.hasValue() && result.get().isPresent()) {
+        Consumer< Pair<Result<Optional<Event>>, Boolean> > callback = pair -> {
+            if (pair.first.hasValue() && pair.first.get().isPresent()) {
                 uiState.setValue(
-                        uiState.getValue().withEvent(result.get().get())
+                        uiState.getValue().withEvent(pair.first.get().get())
+                                .withIsFavorite(pair.second)
                 );
             }
-            if (!result.isSuccess()) {
+            if (!pair.first.isSuccess()) {
                 uiState.setValue(
-                        uiState.getValue().withException(result.getException())
+                        uiState.getValue().withException(pair.first.getException())
                 );
             }
         };
@@ -73,11 +77,59 @@ public class DetailsViewModel extends ViewModel {
                 result = Result.error(e);
             }
             Result<Optional<Event>> finalResult = result;
-            handler.post(() -> callback.accept(finalResult));
+
+            Boolean isFavorite = null;
+            try {
+                isFavorite = eventRepository.isFavorite(eventId);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to check favorite status", e);
+            }
+            Boolean finalIsFavorite = isFavorite;
+
+            handler.post(() -> callback.accept(
+                    new Pair<>(finalResult, finalIsFavorite)
+            ));
         });
     }
 
     public void clearException() {
         uiState.setValue(uiState.getValue().withException(null));
+    }
+
+    public void setFavorite(boolean favorite) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();  // New thread
+        Handler handler = new Handler(Looper.getMainLooper());           // Main thread
+
+        // Callback, to be executed in the main thread
+        Consumer<Result<Boolean>> callback = result -> {
+            if (result.isSuccess()) {
+                uiState.setValue(
+                        uiState.getValue().withIsFavorite(result.get())
+                );
+            } else {
+                uiState.setValue(
+                        uiState.getValue().withException(result.getException())
+                );
+            }
+        };
+
+        // Set favorite in the new thread
+        executor.execute(() -> {
+            Result<Boolean> result;
+            try {
+                String eventId = uiState.getValue().getEvent().getId();
+                if (favorite) {
+                    eventRepository.star(eventId);
+                } else {
+                    eventRepository.unstar(eventId);
+                }
+                result = Result.success(favorite);
+            } catch (Exception e) {
+                result = Result.error(e);
+            }
+            Result<Boolean> finalResult = result;
+
+            handler.post(() -> callback.accept(finalResult));
+        });
     }
 }
