@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.axllblc.worlddays.R;
 import com.axllblc.worlddays.databinding.FragmentHomeBinding;
 import com.axllblc.worlddays.ui.viewmodel.HomeUiState;
 import com.axllblc.worlddays.ui.viewmodel.HomeViewModel;
@@ -104,7 +105,7 @@ public class HomeFragment extends Fragment {
     private void refreshFragment(HomeUiState uiState) {
         // Display error messages
         if (uiState.getException() != null) {
-            Snackbar.make(requireView(), "Something went wrong", Snackbar.LENGTH_SHORT)
+            Snackbar.make(requireView(), R.string.something_went_wrong, Snackbar.LENGTH_SHORT)
                     .show();
             viewModel.clearException();
         }

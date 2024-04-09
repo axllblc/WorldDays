@@ -22,4 +22,6 @@
     <string name="save_the_date">Save the date!</string>
     <string name="share_message">%s on %s</string>
     <string name="share_event">Share this event</string>
+
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">World Days</string>
+
+    <string name="home">Accueil</string>
+    <string name="calendar">Calendrier</string>
+    <string name="favorites">Favoris</string>
+
+    <string name="jump_to_today">Aller à aujourd\'hui</string>
+
+    <string name="searchbar_hint">Rechercher un événement</string>
+
+
+    <string name="action_settings">Paramètres</string>
+
+    <string name="open_wikipedia_article">Lire la suite sur Wikipédia</string>
+    <string name="date_in">Dans %d jours</string>
+    <string name="since">Depuis %s</string>
+    <string name="add_to_calendar">Ajouter à mon agenda</string>
+    <string name="add_to_favorites">Ajouter aux favoris</string>
+    <string name="remove_from_favorites">Retirer des favoris</string>
+    <string name="share">Partager</string>
+    <string name="save_the_date">Prenez date !</string>
+    <string name="share_message">%s le %s</string>
+    <string name="share_event">Partager cet événement</string>
+
+    <string name="something_went_wrong">Une erreur s\'est produite</string>
+</resources>

@@ -34,6 +34,8 @@ public class DetailsActivity extends AppCompatActivity {
     public static final String ARG_EVENT_ID = "eventId";
     private String eventId;
 
+    private static final String TAG = "DetailsActivity";
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -152,9 +154,9 @@ public class DetailsActivity extends AppCompatActivity {
             invalidateMenu();
         }
         if (uiState.getException() != null) {
-            Snackbar.make(binding.getRoot(), "Something went wrong", Snackbar.LENGTH_SHORT)
+            Snackbar.make(binding.getRoot(), R.string.something_went_wrong, Snackbar.LENGTH_SHORT)
                     .show();
-            Log.e("err", "err", uiState.getException());
+            Log.e(TAG, "Error", uiState.getException());
         }
     }
 
