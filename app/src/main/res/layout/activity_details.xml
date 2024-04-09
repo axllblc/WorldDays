@@ -38,6 +38,15 @@
                 android:scaleType="centerCrop"
                 android:importantForAccessibility="no" />
 
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="48dp"
+                android:indeterminate="true"
+                />
+
             <TextView
                 android:id="@+id/event_details_title"
                 android:layout_width="match_parent"
@@ -55,6 +64,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:clickable="true"
+                android:visibility="gone"
                 style="@style/Widget.Material3.CardView.Filled">
                 <TableLayout
                     android:layout_width="match_parent"

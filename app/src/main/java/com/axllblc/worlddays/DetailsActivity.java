@@ -1,7 +1,9 @@
 package com.axllblc.worlddays;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import com.axllblc.worlddays.ui.viewmodel.DetailsViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
@@ -36,10 +39,18 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.details, menu);
 
-        if (viewModel.getUiState().getValue().getEvent() != null) {
+        Event event = viewModel.getUiState().getValue().getEvent();
+        if (event != null) {
             // Share menu item
             MenuItem share = menu.findItem(R.id.share);
             share.setVisible(true);
+            share.setOnMenuItemClickListener(item -> {
+                Intent i = createShareIntent(event);
+                startActivity(Intent.createChooser(
+                        i, getString(R.string.share_event)
+                ));
+                return true;
+            });
 
             // Add to favorites / Remove from favorite menu items
             Boolean isFavorite = viewModel.getUiState().getValue().getIsFavorite();
@@ -78,6 +89,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
+        // Get event ID
         Intent intent = getIntent();
         eventId = intent.getStringExtra(ARG_EVENT_ID);
 
@@ -94,6 +106,8 @@ public class DetailsActivity extends AppCompatActivity {
     private void updateUi(DetailsUiState uiState) {
         Event event = uiState.getEvent();
         if (event != null) {
+            binding.progressIndicator.setVisibility(View.GONE);
+
             binding.eventDetailsTitle.setText(event.getTitle());
 
             binding.eventDetailsDate.setText(event.getNextOccurrence()
@@ -104,6 +118,12 @@ public class DetailsActivity extends AppCompatActivity {
                     R.string.date_in,
                     LocalDate.now().until(event.getNextOccurrence(), ChronoUnit.DAYS)
             ));
+
+            binding.eventDetailsDateCard.setVisibility(View.VISIBLE);
+            binding.eventDetailsDateCard.setOnClickListener(v -> {
+                Intent i = createCalendarIntent(event);
+                startActivity(i);
+            });
 
             if (event.getInception() != null) {
                 binding.eventDetailsInception.setText(getString(
@@ -120,6 +140,13 @@ public class DetailsActivity extends AppCompatActivity {
 
             if (event.getWikipediaURL() != null) {
                 binding.eventDetailsOpenWikipedia.setVisibility(View.VISIBLE);
+                binding.eventDetailsOpenWikipedia.setOnClickListener(v -> {
+                    Intent i = new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(event.getWikipediaURL())
+                    );
+                    startActivity(i);
+                });
             }
 
             invalidateMenu();
@@ -135,5 +162,30 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return super.onSupportNavigateUp();
+    }
+
+    private Intent createCalendarIntent(Event event) {
+        long dateInMillis = event.getNextOccurrence()
+                        .atStartOfDay(ZoneId.systemDefault())
+                        .toEpochSecond() * 1000;
+
+        return new Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+                .putExtra(CalendarContract.Events.TITLE, event.getTitle())
+                .putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, dateInMillis)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, dateInMillis + 1);
+    }
+
+    private Intent createShareIntent(Event event) {
+        return new Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_SUBJECT, getString(R.string.save_the_date))
+                .putExtra(Intent.EXTRA_TEXT, getString(
+                        R.string.share_message,
+                        event.getTitle(),
+                        event.getNextOccurrence()
+                                .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+                ));
     }
 }
