@@ -139,11 +139,13 @@ public class DetailsActivity extends AppCompatActivity {
 
             setDateInText(event);
 
-            binding.eventDetailsDateCard.setVisibility(View.VISIBLE);
-            binding.eventDetailsDateCard.setOnClickListener(v -> {
+            View.OnClickListener dateCardClickListener = v -> {
                 Intent i = createCalendarIntent(event);
                 startActivity(i);
-            });
+            };
+            binding.eventDetailsDateCard.setVisibility(View.VISIBLE);
+            binding.eventDetailsDateCard.setOnClickListener(dateCardClickListener);
+            binding.eventDetailsAddToCalendar.setOnClickListener(dateCardClickListener);
 
             if (event.getInception() != null) {
                 binding.eventDetailsInception.setText(getString(
