@@ -13,6 +13,7 @@ import com.axllblc.worlddays.data.Event;
 import com.axllblc.worlddays.data.Result;
 import com.axllblc.worlddays.data.repository.EventRepository;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,9 +43,13 @@ public class DetailsViewModel extends ViewModel {
         return uiState;
     }
 
+    /**
+     * Set the ID of the {@link Event} to show.
+     * @param eventId ID of the {@link Event} to show
+     */
     public void setEventId(String eventId) {
-        if (uiState.getValue().getEvent() == null
-                || !uiState.getValue().getEvent().getId().equals(eventId)) {
+        Event event = Objects.requireNonNull(uiState.getValue()).getEvent();
+        if (event == null || !event.getId().equals(eventId)) {
             fetchEvent(eventId, false);
         }
     }
@@ -117,7 +122,7 @@ public class DetailsViewModel extends ViewModel {
         executor.execute(() -> {
             Result<Boolean> result;
             try {
-                String eventId = uiState.getValue().getEvent().getId();
+                String eventId = Objects.requireNonNull(uiState.getValue()).getEvent().getId();
                 if (favorite) {
                     eventRepository.star(eventId);
                 } else {

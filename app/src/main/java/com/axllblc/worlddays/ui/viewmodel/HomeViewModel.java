@@ -14,6 +14,7 @@ import com.axllblc.worlddays.data.repository.EventRepository;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -55,7 +56,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     private void fetchEvents(boolean refresh) {
-        int month = uiState.getValue().getDate().getMonth().getValue();
+        int month = Objects.requireNonNull(uiState.getValue()).getDate().getMonth().getValue();
 
         uiState.setValue(
                 uiState.getValue().withLoading(true)

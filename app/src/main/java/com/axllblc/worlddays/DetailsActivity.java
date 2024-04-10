@@ -84,7 +84,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.details, menu);
 
-        Event event = viewModel.getUiState().getValue().getEvent();
+        Event event = Objects.requireNonNull(viewModel.getUiState().getValue()).getEvent();
         if (event != null) {
             // Share menu item
             MenuItem share = menu.findItem(R.id.share);
@@ -221,7 +221,7 @@ public class DetailsActivity extends AppCompatActivity {
     private class TimeBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Event event = viewModel.getUiState().getValue().getEvent();
+            Event event = Objects.requireNonNull(viewModel.getUiState().getValue()).getEvent();
             if (event != null) {
                 setDateInText(event);
             }
