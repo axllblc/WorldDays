@@ -175,11 +175,7 @@ public class EventRepositoryImpl implements EventRepository {
 
     private void merge(Event eventFromRemoteSource, Event eventFromLocalSource) {
         if (eventFromRemoteSource != null) {
-            if (eventFromLocalSource == null) {
-                localEventSource.insert(eventFromRemoteSource);
-            } else if (!eventFromRemoteSource.equals(eventFromLocalSource)) {
-                localEventSource.update(eventFromRemoteSource);
-            }
+            localEventSource.update(eventFromRemoteSource);
         }
     }
 

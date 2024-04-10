@@ -76,6 +76,15 @@ public interface Result<T> {
     T orElseGet(Supplier<? extends T> supplier);
 
     /**
+     * Create a copy of this Result with provided value.
+     * @param value Value of the new Result object
+     * @return The new Result object
+     */
+    Result<T> withValue(T value);
+
+
+
+    /**
      * Create a new {@link Success} object, containing {@code value}.
      * @param value An object
      * @return A new {@link Success} object
@@ -158,6 +167,11 @@ public interface Result<T> {
         public T orElseGet(Supplier<? extends T> supplier) {
             return value;
         }
+
+        @Override
+        public Result<T> withValue(T value) {
+            return success(value);
+        }
     }
 
     class Error<T> implements Result<T> {
@@ -233,6 +247,11 @@ public interface Result<T> {
             } else {
                 return supplier.get();
             }
+        }
+
+        @Override
+        public Result<T> withValue(T value) {
+            return error(exception, value);
         }
     }
 }

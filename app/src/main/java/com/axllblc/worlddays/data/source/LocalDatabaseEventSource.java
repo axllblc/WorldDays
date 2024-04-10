@@ -175,7 +175,7 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
                     .getString(cursor.getColumnIndexOrThrow(DBContract.Events.WIKIPEDIA_INTRO.toString()));
             String inceptionString = cursor
                     .getString(cursor.getColumnIndexOrThrow(DBContract.Events.INCEPTION.toString()));
-            LocalDate inception = LocalDate.parse(inceptionString);
+            LocalDate inception = inceptionString != null ? LocalDate.parse(inceptionString) : null;
             String founder = cursor
                     .getString(cursor.getColumnIndexOrThrow(DBContract.Events.FOUNDER.toString()));
 
@@ -216,7 +216,7 @@ public class LocalDatabaseEventSource extends SQLiteOpenHelper implements ReadWr
                 }
 
                 long result = db.insert(DBContract.Events.TABLE_NAME, null, row);
-                // TODO if (result == -1) throw new RuntimeException();
+                if (result == -1) throw new RuntimeException();
             }
         }
     }

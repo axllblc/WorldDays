@@ -13,11 +13,13 @@ import com.axllblc.worlddays.data.repository.EventRepository;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 import javax.inject.Inject;
@@ -82,8 +84,13 @@ public class HomeViewModel extends ViewModel {
         executor.execute(() -> {
             Result<List<Event>> result;
             try {
-                result = eventRepository.getEventsByMonth(month, refresh);
-            } catch (Exception e) {
+                Result<List<Event>> eventsResult = eventRepository.getEventsByMonth(month, refresh);
+                // Sort events
+                List<Event> sortedEvents = eventsResult.orThrow().stream()
+                        .sorted(Comparator.comparing(Event::getMonthDay))
+                        .collect(Collectors.toList());
+                result = eventsResult.withValue(sortedEvents);
+            } catch (Throwable e) {
                 result = Result.error(e);
             }
             Result<List<Event>> finalResult = result;

@@ -22,7 +22,7 @@ import com.axllblc.worlddays.data.Event;
 import com.axllblc.worlddays.databinding.ActivityDetailsBinding;
 import com.axllblc.worlddays.ui.viewmodel.DetailsUiState;
 import com.axllblc.worlddays.ui.viewmodel.DetailsViewModel;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -172,9 +172,11 @@ public class DetailsActivity extends AppCompatActivity {
             invalidateMenu();
         }
         if (uiState.getException() != null) {
-            Snackbar.make(binding.getRoot(), R.string.something_went_wrong, Snackbar.LENGTH_SHORT)
-                    .show();
             Log.e(TAG, "Error", uiState.getException());
+            new MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.something_went_wrong)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> finish())
+                    .show();
         }
     }
 
