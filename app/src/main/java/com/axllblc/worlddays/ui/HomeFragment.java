@@ -1,5 +1,7 @@
 package com.axllblc.worlddays.ui;
 
+import static com.axllblc.worlddays.Utils.firstLetterToUppercase;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -121,8 +123,10 @@ public class HomeFragment extends Fragment {
         // Show month and year
         LocalDate date = uiState.getDate();
         binding.monthYear.setText(
+                firstLetterToUppercase(
                 date.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
                         + " " + date.getYear()
+                )
         );
     }
 }

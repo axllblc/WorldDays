@@ -1,5 +1,8 @@
 package com.axllblc.worlddays;
 
+import static com.axllblc.worlddays.Utils.firstLetterToUppercase;
+import static com.axllblc.worlddays.Utils.formatFullDate;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -128,10 +131,10 @@ public class DetailsActivity extends AppCompatActivity {
         if (event != null) {
             binding.progressIndicator.setVisibility(View.GONE);
 
-            binding.eventDetailsTitle.setText(event.getTitle());
+            binding.eventDetailsTitle.setText(firstLetterToUppercase(event.getTitle()));
 
-            binding.eventDetailsDate.setText(event.getNextOccurrence()
-                    .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+            binding.eventDetailsDate.setText(
+                    firstLetterToUppercase(formatFullDate(event.getNextOccurrence()))
             );
 
             setDateInText(event);
@@ -145,7 +148,7 @@ public class DetailsActivity extends AppCompatActivity {
             if (event.getInception() != null) {
                 binding.eventDetailsInception.setText(getString(
                         R.string.since,
-                        event.getInception().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+                        formatFullDate(event.getInception())
                 ));
                 binding.eventDetailsInception.setVisibility(View.VISIBLE);
             }
