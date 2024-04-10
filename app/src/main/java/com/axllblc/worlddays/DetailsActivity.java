@@ -1,6 +1,9 @@
 package com.axllblc.worlddays;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -35,6 +38,43 @@ public class DetailsActivity extends AppCompatActivity {
     private String eventId;
 
     private static final String TAG = "DetailsActivity";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(DetailsViewModel.class);
+
+        binding = ActivityDetailsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+
+        // Get event ID
+        Intent intent = getIntent();
+        eventId = intent.getStringExtra(ARG_EVENT_ID);
+
+        viewModel.getUiState().observe(this, this::updateUi);
+
+        // Register BroadcastReceiver
+        IntentFilter timeIntentFilter = new IntentFilter();
+        timeIntentFilter.addAction(Intent.ACTION_TIME_TICK);
+        timeIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        registerReceiver(new TimeBroadcastReceiver(), timeIntentFilter);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        viewModel.setEventId(Objects.requireNonNull(eventId));
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,30 +120,8 @@ public class DetailsActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(DetailsViewModel.class);
-
-        binding = ActivityDetailsBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        setSupportActionBar(binding.toolbar);
-
-        // Get event ID
-        Intent intent = getIntent();
-        eventId = intent.getStringExtra(ARG_EVENT_ID);
-
-        viewModel.getUiState().observe(this, this::updateUi);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        viewModel.setEventId(Objects.requireNonNull(eventId));
-    }
+    // 👇 UI
 
     private void updateUi(DetailsUiState uiState) {
         Event event = uiState.getEvent();
@@ -116,10 +134,7 @@ public class DetailsActivity extends AppCompatActivity {
                     .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
             );
 
-            binding.eventDetailsDateIn.setText(getString(
-                    R.string.date_in,
-                    LocalDate.now().until(event.getNextOccurrence(), ChronoUnit.DAYS)
-            ));
+            setDateInText(event);
 
             binding.eventDetailsDateCard.setVisibility(View.VISIBLE);
             binding.eventDetailsDateCard.setOnClickListener(v -> {
@@ -160,11 +175,15 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return super.onSupportNavigateUp();
+    private void setDateInText(Event event) {
+        binding.eventDetailsDateIn.setText(getString(
+                R.string.date_in,
+                LocalDate.now().until(event.getNextOccurrence(), ChronoUnit.DAYS)
+        ));
     }
+
+
+    // 👇 Intents
 
     private Intent createCalendarIntent(Event event) {
         long dateInMillis = event.getNextOccurrence()
@@ -189,5 +208,20 @@ public class DetailsActivity extends AppCompatActivity {
                         event.getNextOccurrence()
                                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
                 ));
+    }
+
+
+    /**
+     * {@link BroadcastReceiver} that updates the {@code binding.eventDetailsDateIn} TextView on
+     * time tick or when the system date changes.
+     */
+    private class TimeBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Event event = viewModel.getUiState().getValue().getEvent();
+            if (event != null) {
+                setDateInText(event);
+            }
+        }
     }
 }
