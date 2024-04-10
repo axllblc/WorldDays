@@ -25,4 +25,5 @@
     <string name="share_event">Partager cet événement</string>
 
     <string name="something_went_wrong">Une erreur s\'est produite</string>
+    <string name="ok">OK</string>
 </resources>
